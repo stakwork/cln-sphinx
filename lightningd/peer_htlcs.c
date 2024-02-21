@@ -1141,6 +1141,8 @@ htlc_accepted_hook_final(struct htlc_accepted_hook_payload *request STEALS)
 	if (!request->payload) {
 		log_debug(channel->log,
 			  "Failing HTLC because of an invalid payload");
+		log_debug(channel->log,
+			"Failing HTLC with TLV type %u at offset %zu", request->failtlvtype, request->failtlvpos);
 		local_fail_in_htlc(hin,
 				   take(towire_invalid_onion_payload(
 						NULL, request->failtlvtype,
