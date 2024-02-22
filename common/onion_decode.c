@@ -413,12 +413,13 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 		printf("==========> has total_msat nad secret \n");
 
 	}
-	if (p->tlv->payment_metadata)
+	if (p->tlv->payment_metadata) {
 		printf("==========> has payment_metadata \n");
 		p->payment_metadata
 			= tal_dup_talarr(p, u8, p->tlv->payment_metadata);
-	else
+	} else {
 		p->payment_metadata = NULL;
+	}
 
 	p->blinding = NULL;
 	printf("==========> finished \n");
