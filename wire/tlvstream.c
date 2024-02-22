@@ -5,10 +5,10 @@
 #include <wire/wire.h>
 #include <stdio.h>
 
-// #ifndef SUPERVERBOSE
-// #define SUPERVERBOSE(...)
-#define SUPERVERBOSE printf
-// #endif
+#ifndef SUPERVERBOSE
+#define SUPERVERBOSE(...)
+// #define SUPERVERBOSE printf
+#endif
 
 /* This simply needs to be an address which is neither NULL nor a
  * tal_arr return */
