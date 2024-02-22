@@ -8,6 +8,7 @@
 #include <common/onion_decode.h>
 #include <common/sphinx.h>
 #include <sodium/crypto_aead_chacha20poly1305.h>
+#include <stdio.h>
 
 /* BOLT #4:
  * - If `encrypted_recipient_data` is present:
