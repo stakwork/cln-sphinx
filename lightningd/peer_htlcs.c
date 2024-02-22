@@ -23,6 +23,7 @@
 #include <lightningd/plugin_hook.h>
 #include <lightningd/subd.h>
 #include <onchaind/onchaind_wiregen.h>
+#include <stdio.h>
 
 #ifndef SUPERVERBOSE
 #define SUPERVERBOSE(...)
