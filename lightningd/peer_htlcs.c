@@ -959,6 +959,7 @@ static bool htlc_accepted_hook_deserialize(struct htlc_accepted_hook_payload *re
 		tal_free(rs->raw_payload);
 
 		rs->raw_payload = prepend_length(rs, take(payload));
+		printf("onion_decode in htlc_accepted_hook_deserialize\n");
 		request->payload = onion_decode(request,
 						feature_offered(ld->our_features->bits[INIT_FEATURE],
 								OPT_ROUTE_BLINDING),
@@ -1399,6 +1400,7 @@ static bool peer_accepted_htlc(const tal_t *ctx,
 	hook_payload = tal(NULL, struct htlc_accepted_hook_payload);
 
 	hook_payload->route_step = tal_steal(hook_payload, rs);
+	printf("onion_decode in peer_accepted_htlc\n");
 	hook_payload->payload = onion_decode(hook_payload,
 					     feature_offered(ld->our_features->bits[INIT_FEATURE],
 							     OPT_ROUTE_BLINDING),
