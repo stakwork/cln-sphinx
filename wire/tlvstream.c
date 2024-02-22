@@ -161,6 +161,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 		 * The `type` is encoded using the BigSize format.
 		 */
 		field.numtype = fromwire_bigsize(cursor, max);
+		log_debug(record, "Parsing type %lu", field.numtype);
 
 		/* BOLT #1:
 		 *  - if a `type` or `length` is not minimally encoded:
@@ -168,6 +169,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 		 */
 		if (!*cursor) {
 			SUPERVERBOSE("type");
+			log_debug("type");
 			if (err_type)
 				*err_type = 0;
 			goto fail;
@@ -182,8 +184,10 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 		if (!first && field.numtype <= prev_type) {
 			if (field.numtype == prev_type)
 				SUPERVERBOSE("duplicate tlv type");
+				log_debug("duplicate tlv type");
 			else
 				SUPERVERBOSE("invalid ordering");
+				log_debug("invalid ordering");
 			if (err_type)
 				*err_type = field.numtype;
 			goto fail;
@@ -206,6 +210,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 
 		if (!field.meta && !tlv_type_is_allowed(&field, extra_types)) {
 			SUPERVERBOSE("unknown even");
+			log_debug("unknown even");
 			if (err_type != NULL)
 				*err_type = field.numtype;
 			goto fail;
@@ -222,6 +227,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 		 */
 		if (!*cursor) {
 			SUPERVERBOSE("length");
+			log_debug("length");
 			if (err_type)
 				*err_type = field.numtype;
 			goto fail;
@@ -234,6 +240,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 		 */
 		if (field.length > *max) {
 			SUPERVERBOSE("value");
+			log_debug("value");
 			if (err_type)
 				*err_type = field.numtype;
 			goto fail;
@@ -269,6 +276,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 				if (err_type != NULL)
 					*err_type = field.numtype;
 				SUPERVERBOSE("greater than encoding length");
+				log_debug("greater than encoding length");
 				goto fail;
 			}
 		} else {
