@@ -3,6 +3,7 @@
 #include <common/bigsize.h>
 #include <wire/tlvstream.h>
 #include <wire/wire.h>
+#include <stdio.h>
 
 #ifndef SUPERVERBOSE
 // #define SUPERVERBOSE(...)
