@@ -181,7 +181,7 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 	const u8 *cursor = rs->raw_payload;
 	size_t max = tal_bytelen(cursor), len;
 
-	printf("==========> onion_decode");
+	printf("==========> onion_decode\n");
 
 	p->final = (rs->nextcase == ONION_END);
 
@@ -192,21 +192,26 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 	 *    * [`length*byte`:`payload`]
 	 */
 	len = fromwire_bigsize(&cursor, &max);
+	printf("==========> fromwire_bigsize\n");
 	if (!cursor || len > max) {
 		*failtlvtype = 0;
 		*failtlvpos = tal_bytelen(rs->raw_payload);
 		return tal_free(p);
 	}
+	printf("==========> if (!cursor || len > max) \n");
 
 	/* We do this manually so we can accept extra types, and get
 	 * error off and type. */
 	p->tlv = tlv_payload_new(p);
+	printf("==========> tlv_payload_new\n");
+
 	if (!fromwire_tlv(&cursor, &max, tlvs_tlv_payload,
 			  TLVS_ARRAY_SIZE_tlv_payload,
 			  p->tlv, &p->tlv->fields, accepted_extra_tlvs,
 			  failtlvpos, failtlvtype)) {
 		return tal_free(p);
 	}
+	printf("==========> fromwire_tlv done\n");
 
 	/* BOLT #4:
 	 *
@@ -342,6 +347,7 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 		*failtlvtype = TLV_PAYLOAD_ENCRYPTED_RECIPIENT_DATA;
 		goto field_bad;
 	}
+	printf("==========> no blinding \n");
 
 	/* BOLT #4:
 	 *
@@ -354,10 +360,12 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 		*failtlvtype = TLV_PAYLOAD_AMT_TO_FORWARD;
 		goto field_bad;
 	}
+	printf("==========> amt_to_forwad ok \n");
 	if (!p->tlv->outgoing_cltv_value) {
 		*failtlvtype = TLV_PAYLOAD_OUTGOING_CLTV_VALUE;
 		goto field_bad;
 	}
+	printf("==========>  outgoing_cltv_value ok \n");
 
 	p->amt_to_forward = amount_msat(*p->tlv->amt_to_forward);
 	p->outgoing_cltv = *p->tlv->outgoing_cltv_value;
@@ -377,6 +385,7 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 					     p->tlv->short_channel_id);
 		p->total_msat = NULL;
 	} else {
+		printf("==========> is final \n");
 		p->forward_channel = NULL;
 		/* BOLT #4:
 		 * - If it is the final node:
@@ -384,6 +393,8 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 		 *     `amt_to_forward` if it is not present. */
 		p->total_msat = tal_dup(p, struct amount_msat,
 					&p->amt_to_forward);
+		printf("==========> total_msat ok \n");
+
 	}
 
 	/* Non-blinded is (currently) always by scid */
@@ -391,20 +402,26 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 
 	p->payment_secret = NULL;
 	if (p->tlv->payment_data) {
+		printf("==========> has pmt data ok \n");
+
 		p->payment_secret = tal_dup(p, struct secret,
 					    &p->tlv->payment_data->payment_secret);
 		tal_free(p->total_msat);
 		p->total_msat = tal(p, struct amount_msat);
 		*p->total_msat
 			= amount_msat(p->tlv->payment_data->total_msat);
+		printf("==========> has total_msat nad secret \n");
+
 	}
 	if (p->tlv->payment_metadata)
+		printf("==========> has payment_metadata \n");
 		p->payment_metadata
 			= tal_dup_talarr(p, u8, p->tlv->payment_metadata);
 	else
 		p->payment_metadata = NULL;
 
 	p->blinding = NULL;
+	printf("==========> finished \n");
 
 	return p;
 
