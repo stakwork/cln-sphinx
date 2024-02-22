@@ -5,7 +5,8 @@
 #include <wire/wire.h>
 
 #ifndef SUPERVERBOSE
-#define SUPERVERBOSE(...)
+// #define SUPERVERBOSE(...)
+#define SUPERVERBOSE printf
 #endif
 
 /* This simply needs to be an address which is neither NULL nor a
