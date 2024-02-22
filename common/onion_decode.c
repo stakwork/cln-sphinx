@@ -180,6 +180,8 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 	const u8 *cursor = rs->raw_payload;
 	size_t max = tal_bytelen(cursor), len;
 
+	printf("==========> onion_decode");
+
 	p->final = (rs->nextcase == ONION_END);
 
 	/* BOLT #4:
@@ -198,14 +200,12 @@ struct onion_payload *onion_decode(const tal_t *ctx,
 	/* We do this manually so we can accept extra types, and get
 	 * error off and type. */
 	p->tlv = tlv_payload_new(p);
-	log_debug("Decoding payload");
 	if (!fromwire_tlv(&cursor, &max, tlvs_tlv_payload,
 			  TLVS_ARRAY_SIZE_tlv_payload,
 			  p->tlv, &p->tlv->fields, accepted_extra_tlvs,
 			  failtlvpos, failtlvtype)) {
 		return tal_free(p);
 	}
-	log_debug("Decoding payload past fromwire_tlv");
 
 	/* BOLT #4:
 	 *
