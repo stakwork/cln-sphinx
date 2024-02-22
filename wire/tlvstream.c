@@ -161,7 +161,7 @@ bool fromwire_tlv(const u8 **cursor, size_t *max,
 		 * The `type` is encoded using the BigSize format.
 		 */
 		field.numtype = fromwire_bigsize(cursor, max);
-		printlnf("field.numtype: %llu", field.numtype);
+		printf("field.numtype: %llu \n", field.numtype);
 
 		/* BOLT #1:
 		 *  - if a `type` or `length` is not minimally encoded:
